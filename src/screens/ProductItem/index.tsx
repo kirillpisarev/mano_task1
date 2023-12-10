@@ -1,7 +1,7 @@
 import React from 'react';
 import {observer} from 'mobx-react-lite';
-import {View, Text, Image, StyleSheet} from 'react-native';
-import {useAppRoute} from '../../navigation';
+import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {useAppNavigation, useAppRoute} from '../../navigation';
 import {Loading} from '../../shared/components/Loading';
 import {useProductData} from './hooks/useProductData';
 import {useSetProductTitle} from './hooks/useSetProductTitle';
@@ -10,8 +10,11 @@ export const ProductItem = observer(function ProductItem() {
   const {
     params: {productId},
   } = useAppRoute<'ProductItem'>();
+  const navigation = useAppNavigation();
   const {product} = useProductData({productId});
   useSetProductTitle({product});
+
+  const imageUrl = product?.images[0]?.original;
 
   if (!product) {
     return <Loading />;
@@ -19,11 +22,11 @@ export const ProductItem = observer(function ProductItem() {
 
   return (
     <View style={styles.container}>
-      {!!product.images[0]?.original && (
-        <Image
-          source={{uri: product.images[0].original}}
-          style={styles.thumbnail}
-        />
+      {!!imageUrl && (
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ImageView', {imageUrl})}>
+          <Image source={{uri: imageUrl}} style={styles.thumbnail} />
+        </TouchableOpacity>
       )}
       <View style={styles.productInfo}>
         <Text style={styles.titleText}>{product.title}</Text>

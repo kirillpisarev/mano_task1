@@ -13,10 +13,12 @@ import {
 } from '@react-navigation/stack';
 import {ProductList} from '../screens/ProductList';
 import {ProductItem} from '../screens/ProductItem';
+import {ImageView} from '../screens/ImageView';
 
 export type MainStackParamList = {
   ProductList: undefined;
   ProductItem: {productId: number};
+  ImageView: {imageUrl: string};
 };
 
 const MainStack = createStackNavigator<MainStackParamList>();
@@ -30,6 +32,13 @@ const MainNavigator = () => {
         options={{title: 'Products'}}
       />
       <MainStack.Screen name="ProductItem" component={ProductItem} />
+      <MainStack.Screen
+        name="ImageView"
+        component={ImageView}
+        options={{
+          presentation: 'transparentModal',
+        }}
+      />
     </MainStack.Navigator>
   );
 };
