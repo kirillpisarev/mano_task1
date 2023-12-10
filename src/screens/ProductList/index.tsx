@@ -1,25 +1,35 @@
-import React, {useEffect} from 'react';
-import {View, Text, FlatList, ListRenderItem} from 'react-native';
+import React, {useCallback} from 'react';
+import {Text, FlatList, ListRenderItem, StyleSheet} from 'react-native';
 import {observer} from 'mobx-react-lite';
-import {useStores} from '../../stores';
-import {Product} from '../../data/repository/products/types';
+import {ProductListItem} from './components/ProductListItem';
+import {Loading} from '../../shared/components/Loading';
+import {useProductListData} from './hooks/useProducListData';
 
 export const ProductList = observer(function ProductList() {
-  const {productsStore} = useStores();
+  const {productListIds, isLoading} = useProductListData();
 
-  useEffect(() => {
-    productsStore.loadProductsList();
-  }, [productsStore]);
+  const renderItem: ListRenderItem<number> = useCallback(
+    ({item: productId}) => <ProductListItem id={productId} />,
+    [],
+  );
 
   return (
-    <View>
-      <Text>List</Text>
-      <Text>loading: {productsStore.isLoading.toString()}</Text>
-      <FlatList data={productsStore.products} renderItem={renderItem} />
-    </View>
+    <FlatList
+      data={productListIds}
+      renderItem={renderItem}
+      numColumns={2}
+      columnWrapperStyle={styles.column}
+      contentContainerStyle={styles.listContent}
+      ListEmptyComponent={isLoading ? Loading : <Text>Nothing is found</Text>}
+    />
   );
 });
 
-const renderItem: ListRenderItem<Product> = ({item}) => (
-  <Text key={item.id}>{item.brand}</Text>
-);
+const styles = StyleSheet.create({
+  column: {
+    width: '50%',
+  },
+  listContent: {
+    flexGrow: 1,
+  },
+});

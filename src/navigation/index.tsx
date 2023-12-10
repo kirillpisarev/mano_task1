@@ -1,8 +1,16 @@
 // SPDX-License-Identifier: ice License 1.0
 
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import {
+  NavigationContainer,
+  useNavigation,
+  useRoute,
+  RouteProp,
+} from '@react-navigation/native';
+import {
+  StackNavigationProp,
+  createStackNavigator,
+} from '@react-navigation/stack';
 import {ProductList} from '../screens/ProductList';
 import {ProductItem} from '../screens/ProductItem';
 
@@ -16,7 +24,11 @@ const MainStack = createStackNavigator<MainStackParamList>();
 const MainNavigator = () => {
   return (
     <MainStack.Navigator initialRouteName="ProductList">
-      <MainStack.Screen name="ProductList" component={ProductList} />
+      <MainStack.Screen
+        name="ProductList"
+        component={ProductList}
+        options={{title: 'Products'}}
+      />
       <MainStack.Screen name="ProductItem" component={ProductItem} />
     </MainStack.Navigator>
   );
@@ -29,3 +41,10 @@ export const Router = () => {
     </NavigationContainer>
   );
 };
+
+export const useAppNavigation = () => {
+  return useNavigation<StackNavigationProp<MainStackParamList>>();
+};
+
+export const useAppRoute = <T extends keyof MainStackParamList>() =>
+  useRoute<RouteProp<MainStackParamList, T>>();

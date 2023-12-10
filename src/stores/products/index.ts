@@ -2,13 +2,15 @@ import {makeAutoObservable, runInAction} from 'mobx';
 import {RootStore} from '../root';
 import {ProductsRepository} from '../../data/repository/products';
 import {Product} from '../../data/repository/products/types';
+import {normalize} from '../../utils/array';
 
 export class ProductsStore {
   rootStore: RootStore;
 
   productsRepository: ProductsRepository;
 
-  products: Product[] = [];
+  productListIds: number[] = [];
+  productEntities: {[id: number]: Product} = {};
   isLoading = false;
 
   constructor(rootStore: RootStore, productsRepository: ProductsRepository) {
@@ -17,12 +19,27 @@ export class ProductsStore {
     this.productsRepository = productsRepository;
   }
 
-  async loadProductsList() {
+  async fetchProductsList() {
     this.isLoading = true;
     const {data} = await this.productsRepository.getProductList();
     runInAction(() => {
-      this.products = data.data.items;
+      const {ids, entities} = normalize(data.data.items);
+      this.productListIds = ids;
+      this.productEntities = entities;
       this.isLoading = false;
     });
+  }
+
+  async fetchProductById(id: number) {
+    const {
+      data: {data: product},
+    } = await this.productsRepository.getProductById(id);
+    runInAction(() => {
+      this.productEntities[product.id] = product;
+    });
+  }
+
+  getProductById(id: number) {
+    return this.productEntities[id];
   }
 }
