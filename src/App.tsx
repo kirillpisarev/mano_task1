@@ -1,6 +1,11 @@
 import {Router} from './navigation';
+import {StoreProvider} from './stores';
 import React from 'react';
 
 export const App = () => {
-  return <Router />;
+  return (
+    <StoreProvider>
+      <Router />
+    </StoreProvider>
+  );
 };
