@@ -1,10 +1,10 @@
 import React from 'react';
 import {View, Text} from 'react-native';
 
-export const ProductList = () => {
+export const ProductItem = () => {
   return (
     <View>
-      <Text>List</Text>
+      <Text>Item</Text>
     </View>
   );
 };
